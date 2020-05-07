@@ -525,7 +525,7 @@ impl ops::Not for PollOpt {
 }
 
 impl fmt::Debug for PollOpt {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut one = false;
         let flags = [
             (PollOpt::edge(), "Edge-Triggered"),
@@ -1012,7 +1012,7 @@ impl ops::Not for Ready {
 }
 
 impl fmt::Debug for Ready {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut one = false;
         let flags = [
             (Ready::readable(), "Readable"),

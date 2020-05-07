@@ -1,15 +1,15 @@
 #![allow(deprecated)]
 
-extern crate mio;
-extern crate bytes;
-extern crate net2;
+
+
+use net2;
 
 #[macro_use]
 extern crate log;
-extern crate env_logger;
-extern crate iovec;
-extern crate slab;
-extern crate tempdir;
+
+
+
+
 
 #[cfg(target_os = "fuchsia")]
 extern crate fuchsia_zircon as zircon;

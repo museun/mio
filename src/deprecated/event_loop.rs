@@ -308,7 +308,7 @@ impl<H: Handler> EventLoop<H> {
 }
 
 impl<H: Handler> fmt::Debug for EventLoop<H> {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt.debug_struct("EventLoop")
             .field("run", &self.run)
             .field("poll", &self.poll)
@@ -323,7 +323,7 @@ pub struct Sender<M> {
 }
 
 impl<M> fmt::Debug for Sender<M> {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "Sender<?> {{ ... }}")
     }
 }

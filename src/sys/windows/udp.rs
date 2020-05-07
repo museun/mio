@@ -267,7 +267,7 @@ impl UdpSocket {
         self.imp.inner.socket.take_error()
     }
 
-    fn inner(&self) -> MutexGuard<Inner> {
+    fn inner(&self) -> MutexGuard<'_, Inner> {
         self.imp.inner()
     }
 
@@ -288,7 +288,7 @@ impl UdpSocket {
 }
 
 impl Imp {
-    fn inner(&self) -> MutexGuard<Inner> {
+    fn inner(&self) -> MutexGuard<'_, Inner> {
         self.inner.inner.lock().unwrap()
     }
 
@@ -356,7 +356,7 @@ impl Evented for UdpSocket {
 }
 
 impl fmt::Debug for UdpSocket {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("UdpSocket")
             .finish()
     }

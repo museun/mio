@@ -226,11 +226,11 @@ impl TcpStream {
         }
     }
 
-    fn inner(&self) -> MutexGuard<StreamInner> {
+    fn inner(&self) -> MutexGuard<'_, StreamInner> {
         self.imp.inner()
     }
 
-    fn before_read(&self) -> io::Result<MutexGuard<StreamInner>> {
+    fn before_read(&self) -> io::Result<MutexGuard<'_, StreamInner>> {
         let mut me = self.inner();
 
         match me.read {
@@ -390,7 +390,7 @@ impl TcpStream {
 }
 
 impl StreamImp {
-    fn inner(&self) -> MutexGuard<StreamInner> {
+    fn inner(&self) -> MutexGuard<'_, StreamInner> {
         self.inner.inner.lock().unwrap()
     }
 
@@ -617,7 +617,7 @@ impl Evented for TcpStream {
 }
 
 impl fmt::Debug for TcpStream {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("TcpStream")
             .finish()
     }
@@ -723,13 +723,13 @@ impl TcpListener {
         self.imp.inner.socket.take_error()
     }
 
-    fn inner(&self) -> MutexGuard<ListenerInner> {
+    fn inner(&self) -> MutexGuard<'_, ListenerInner> {
         self.imp.inner()
     }
 }
 
 impl ListenerImp {
-    fn inner(&self) -> MutexGuard<ListenerInner> {
+    fn inner(&self) -> MutexGuard<'_, ListenerInner> {
         self.inner.inner.lock().unwrap()
     }
 
@@ -826,7 +826,7 @@ impl Evented for TcpListener {
 }
 
 impl fmt::Debug for TcpListener {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("TcpListener")
             .finish()
     }

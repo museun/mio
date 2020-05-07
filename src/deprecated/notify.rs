@@ -8,7 +8,7 @@ pub enum NotifyError<T> {
 }
 
 impl<M> fmt::Debug for NotifyError<M> {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             NotifyError::Io(ref e) => {
                 write!(fmt, "NotifyError::Io({:?})", e)
@@ -24,7 +24,7 @@ impl<M> fmt::Debug for NotifyError<M> {
 }
 
 impl<M> fmt::Display for NotifyError<M> {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             NotifyError::Io(ref e) => {
                 write!(fmt, "IO error: {}", e)
