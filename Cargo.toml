@@ -16,6 +16,7 @@ repository    = "https://github.com/carllerche/mio"
 readme        = "README.md"
 keywords      = ["io", "async", "non-blocking"]
 categories    = ["asynchronous"]
+edition       = "2018"
 exclude       = [
   ".gitignore",
   ".travis.yml",
