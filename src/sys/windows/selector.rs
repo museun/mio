@@ -9,8 +9,6 @@ use std::time::Duration;
 
 use crate::lazycell::AtomicLazyCell;
 
-use winapi::*;
-use miow;
 use miow::iocp::{CompletionPort, CompletionStatus};
 
 use crate::event_imp::{Event, Evented, Ready};
@@ -58,7 +56,7 @@ impl Selector {
         CompletionPort::new(0).map(|cp| {
             Selector {
                 inner: Arc::new(SelectorInner {
-                    id: id,
+                    id,
                     port: cp,
                     buffers: Mutex::new(BufferPool::new(256)),
                 }),
@@ -78,7 +76,7 @@ impl Selector {
         trace!("polling IOCP");
         let n = match self.inner.port.get_many(&mut events.statuses, timeout) {
             Ok(statuses) => statuses.len(),
-            Err(ref e) if e.raw_os_error() == Some(WAIT_TIMEOUT as i32) => 0,
+            Err(ref e) if e.raw_os_error() == Some(winapi::shared::winerror::WAIT_TIMEOUT as i32) => 0,
             Err(e) => return Err(e),
         };
 
@@ -491,7 +489,7 @@ macro_rules! offset_of {
 #[repr(C)]
 pub struct Overlapped {
     inner: UnsafeCell<miow::Overlapped>,
-    callback: fn(&OVERLAPPED_ENTRY),
+    callback: fn(&winapi::um::minwinbase::OVERLAPPED_ENTRY),
 }
 
 impl Overlapped {
@@ -502,7 +500,7 @@ impl Overlapped {
     /// I/O operations that are registered with mio's event loop. When the I/O
     /// operation associated with an `OVERLAPPED` pointer completes the event
     /// loop will invoke the function pointer provided by `cb`.
-    pub fn new(cb: fn(&OVERLAPPED_ENTRY)) -> Overlapped {
+    pub fn new(cb: fn(&winapi::um::minwinbase::OVERLAPPED_ENTRY)) -> Overlapped {
         Overlapped {
             inner: UnsafeCell::new(miow::Overlapped::zero()),
             callback: cb,
@@ -513,7 +511,7 @@ impl Overlapped {
     ///
     /// This can be useful when only a shared borrow is held and the overlapped
     /// pointer needs to be passed down to winapi.
-    pub fn as_mut_ptr(&self) -> *mut OVERLAPPED {
+    pub fn as_mut_ptr(&self) -> *mut winapi::um::minwinbase::OVERLAPPED {
         unsafe {
             (*self.inner.get()).raw()
         }

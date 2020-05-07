@@ -9,7 +9,6 @@ use std::time::Duration;
 use miow::iocp::CompletionStatus;
 use miow::net::*;
 use net2::{TcpBuilder, TcpStreamExt as Net2TcpExt};
-use winapi::*;
 use iovec::IoVec;
 
 use crate::{poll, Ready, Poll, PollOpt, Token};
@@ -100,10 +99,10 @@ impl TcpStream {
                 inner: FromRawArc::new(StreamIo {
                     read: Overlapped::new(read_done),
                     write: Overlapped::new(write_done),
-                    socket: socket,
+                    socket,
                     inner: Mutex::new(StreamInner {
                         iocp: ReadyBinding::new(),
-                        deferred_connect: deferred_connect,
+                        deferred_connect,
                         read: State::Empty,
                         write: State::Empty,
                         instant_notify: false,
@@ -522,7 +521,7 @@ impl StreamImp {
     }
 }
 
-fn read_done(status: &OVERLAPPED_ENTRY) {
+fn read_done(status: &winapi::um::minwinbase::OVERLAPPED_ENTRY) {
     let status = CompletionStatus::from_entry(status);
     let me2 = StreamImp {
         inner: unsafe { overlapped2arc!(status.overlapped(), StreamIo, read) },
@@ -559,7 +558,7 @@ fn read_done(status: &OVERLAPPED_ENTRY) {
     }
 }
 
-fn write_done(status: &OVERLAPPED_ENTRY) {
+fn write_done(status: &winapi::um::minwinbase::OVERLAPPED_ENTRY) {
     let status = CompletionStatus::from_entry(status);
     trace!("finished a write {}", status.bytes_transferred());
     let me2 = StreamImp {
@@ -586,7 +585,7 @@ impl Evented for TcpStream {
                                      interest, opts, &self.registration)?;
 
         unsafe {
-            super::no_notify_on_instant_completion(self.imp.inner.socket.as_raw_socket() as HANDLE)?;
+            super::no_notify_on_instant_completion(self.imp.inner.socket.as_raw_socket() as winapi::um::winnt::HANDLE)?;
             me.instant_notify = true;
         }
 
@@ -660,8 +659,8 @@ impl TcpListener {
             imp: ListenerImp {
                 inner: FromRawArc::new(ListenerIo {
                     accept: Overlapped::new(accept_done),
-                    family: family,
-                    socket: socket,
+                    family,
+                    socket,
                     inner: Mutex::new(ListenerInner {
                         iocp: ReadyBinding::new(),
                         accept: State::Empty,
@@ -688,7 +687,7 @@ impl TcpListener {
 
         self.imp.schedule_accept(&mut me);
 
-        return ret
+        ret
     }
 
     pub fn local_addr(&self) -> io::Result<SocketAddr> {
@@ -744,13 +743,16 @@ impl ListenerImp {
         let res = match self.inner.family {
             Family::V4 => TcpBuilder::new_v4(),
             Family::V6 => TcpBuilder::new_v6(),
-        }.and_then(|builder| unsafe {
+        }
+        .and_then(|builder| builder.to_tcp_stream())
+        .and_then(|stream| unsafe {
             trace!("scheduling an accept");
-            self.inner.socket.accept_overlapped(&builder, &mut me.accept_buf,
-                                                self.inner.accept.as_mut_ptr())
-        });
+            self.inner.socket.accept_overlapped(&stream, &mut me.accept_buf, self.inner.accept.as_mut_ptr())
+                .map(|ok| (ok, stream))                                            
+        });        
+
         match res {
-            Ok((socket, _)) => {
+            Ok((_, socket)) => {
                 // see docs above on StreamImp.inner for rationale on forget
                 me.accept = State::Pending(socket);
                 mem::forget(self.clone());
@@ -768,7 +770,7 @@ impl ListenerImp {
     }
 }
 
-fn accept_done(status: &OVERLAPPED_ENTRY) {
+fn accept_done(status: &winapi::um::minwinbase::OVERLAPPED_ENTRY) {
     let status = CompletionStatus::from_entry(status);
     let me2 = ListenerImp {
         inner: unsafe { overlapped2arc!(status.overlapped(), ListenerIo, accept) },
@@ -802,7 +804,7 @@ impl Evented for TcpListener {
                                      interest, opts, &self.registration)?;
 
         unsafe {
-            super::no_notify_on_instant_completion(self.imp.inner.socket.as_raw_socket() as HANDLE)?;
+            super::no_notify_on_instant_completion(self.imp.inner.socket.as_raw_socket() as winapi::um::winnt::HANDLE)?;
             me.instant_notify = true;
         }
 

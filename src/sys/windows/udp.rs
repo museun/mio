@@ -12,7 +12,6 @@ use std::sync::{Mutex, MutexGuard};
 
 #[allow(unused_imports)]
 use net2::{UdpBuilder, UdpSocketExt};
-use winapi::*;
 use miow::iocp::CompletionStatus;
 use miow::net::SocketAddrBuf;
 use miow::net::UdpSocketExt as MiowUdpSocketExt;
@@ -61,7 +60,7 @@ impl UdpSocket {
                 inner: FromRawArc::new(Io {
                     read: Overlapped::new(recv_done),
                     write: Overlapped::new(send_done),
-                    socket: socket,
+                    socket,
                     inner: Mutex::new(Inner {
                         iocp: ReadyBinding::new(),
                         read: State::Empty,
@@ -160,7 +159,7 @@ impl UdpSocket {
                 // then don't actually read any data, just return an error.
                 if buf.len() < data.len() {
                     me.read = State::Ready(data);
-                    Err(io::Error::from_raw_os_error(WSAEMSGSIZE as i32))
+                    Err(io::Error::from_raw_os_error(winapi::shared::winerror::WSAEMSGSIZE as i32))
                 } else {
                     let r = if let Some(addr) = me.read_buf.to_socket_addr() {
                         buf.write(&data).unwrap();
@@ -383,7 +382,7 @@ impl Drop for UdpSocket {
     }
 }
 
-fn send_done(status: &OVERLAPPED_ENTRY) {
+fn send_done(status: &winapi::um::minwinbase::OVERLAPPED_ENTRY) {
     let status = CompletionStatus::from_entry(status);
     trace!("finished a send {}", status.bytes_transferred());
     let me2 = Imp {
@@ -394,7 +393,7 @@ fn send_done(status: &OVERLAPPED_ENTRY) {
     me2.add_readiness(&mut me, Ready::writable());
 }
 
-fn recv_done(status: &OVERLAPPED_ENTRY) {
+fn recv_done(status: &winapi::um::minwinbase::OVERLAPPED_ENTRY) {
     let status = CompletionStatus::from_entry(status);
     trace!("finished a recv {}", status.bytes_transferred());
     let me2 = Imp {
