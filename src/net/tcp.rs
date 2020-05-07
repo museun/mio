@@ -15,9 +15,9 @@ use std::time::Duration;
 use net2::TcpBuilder;
 use iovec::IoVec;
 
-use {io, sys, Ready, Poll, PollOpt, Token};
-use event::Evented;
-use poll::SelectorId;
+use crate::{io, sys, Ready, Poll, PollOpt, Token};
+use crate::event::Evented;
+use crate::poll::SelectorId;
 
 /*
  *
@@ -330,7 +330,7 @@ impl TcpStream {
     pub fn keepalive_ms(&self) -> io::Result<Option<u32>> {
         self.keepalive().map(|v| {
             v.map(|v| {
-                ::convert::millis(v) as u32
+                crate::convert::millis(v) as u32
             })
         })
     }
@@ -576,7 +576,7 @@ impl TcpListener {
     /// If an accepted stream is returned, the remote address of the peer is
     /// returned along with it.
     pub fn accept(&self) -> io::Result<(TcpStream, SocketAddr)> {
-        let (s, a) = try!(self.accept_std());
+        let (s, a) = r#try!(self.accept_std());
         Ok((TcpStream::from_stream(s)?, a))
     }
 

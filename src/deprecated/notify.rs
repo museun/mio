@@ -1,4 +1,4 @@
-use {channel};
+use crate::{channel};
 use std::{fmt, io, error, any};
 
 pub enum NotifyError<T> {

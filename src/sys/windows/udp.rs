@@ -17,10 +17,10 @@ use miow::iocp::CompletionStatus;
 use miow::net::SocketAddrBuf;
 use miow::net::UdpSocketExt as MiowUdpSocketExt;
 
-use {poll, Ready, Poll, PollOpt, Token};
-use event::Evented;
-use sys::windows::from_raw_arc::FromRawArc;
-use sys::windows::selector::{Overlapped, ReadyBinding};
+use crate::{poll, Ready, Poll, PollOpt, Token};
+use crate::event::Evented;
+use crate::sys::windows::from_raw_arc::FromRawArc;
+use crate::sys::windows::selector::{Overlapped, ReadyBinding};
 
 pub struct UdpSocket {
     imp: Imp,

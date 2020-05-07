@@ -2,9 +2,9 @@
 
 #![allow(deprecated, missing_debug_implementations)]
 
-use {convert, io, Ready, Poll, PollOpt, Registration, SetReadiness, Token};
-use event::Evented;
-use lazycell::LazyCell;
+use crate::{convert, io, Ready, Poll, PollOpt, Registration, SetReadiness, Token};
+use crate::event::Evented;
+use crate::lazycell::LazyCell;
 use slab::Slab;
 use std::{cmp, error, fmt, u64, usize, iter, thread};
 use std::sync::Arc;

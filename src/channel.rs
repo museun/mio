@@ -2,9 +2,9 @@
 
 #![allow(unused_imports, deprecated, missing_debug_implementations)]
 
-use {io, Ready, Poll, PollOpt, Registration, SetReadiness, Token};
-use event::Evented;
-use lazycell::{LazyCell, AtomicLazyCell};
+use crate::{io, Ready, Poll, PollOpt, Registration, SetReadiness, Token};
+use crate::event::Evented;
+use crate::lazycell::{LazyCell, AtomicLazyCell};
 use std::any::Any;
 use std::fmt;
 use std::error;

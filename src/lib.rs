@@ -165,7 +165,7 @@ pub use iovec::IoVec;
 #[cfg(feature = "with-deprecated")]
 #[doc(hidden)]
 pub mod tcp {
-    pub use net::{TcpListener, TcpStream};
+    pub use crate::net::{TcpListener, TcpStream};
     pub use std::net::Shutdown;
 }
 
@@ -174,16 +174,16 @@ pub mod tcp {
 #[doc(hidden)]
 pub mod udp;
 
-pub use poll::{
+pub use crate::poll::{
     Poll,
     Registration,
     SetReadiness,
 };
-pub use event_imp::{
+pub use crate::event_imp::{
     PollOpt,
     Ready,
 };
-pub use token::Token;
+pub use crate::token::Token;
 
 pub mod event {
     //! Readiness event types and utilities.
@@ -192,24 +192,24 @@ pub mod event {
     pub use super::event_imp::{Event, Evented};
 }
 
-pub use event::{
+pub use crate::event::{
     Events,
 };
 
 #[deprecated(since = "0.6.5", note = "use events:: instead")]
 #[cfg(feature = "with-deprecated")]
 #[doc(hidden)]
-pub use event::{Event, Evented};
+pub use crate::event::{Event, Evented};
 
 #[deprecated(since = "0.6.5", note = "use events::Iter instead")]
 #[cfg(feature = "with-deprecated")]
 #[doc(hidden)]
-pub use poll::Iter as EventsIter;
+pub use crate::poll::Iter as EventsIter;
 
 #[deprecated(since = "0.6.5", note = "std::io::Error can avoid the allocation now")]
 #[cfg(feature = "with-deprecated")]
 #[doc(hidden)]
-pub use io::deprecated::would_block;
+pub use crate::io::deprecated::would_block;
 
 #[cfg(all(unix, not(target_os = "fuchsia")))]
 pub mod unix {
@@ -288,7 +288,7 @@ pub mod fuchsia {
 #[cfg(windows)]
 pub mod windows {
 
-    pub use sys::{Overlapped, Binding};
+    pub use crate::sys::{Overlapped, Binding};
 }
 
 #[cfg(feature = "with-deprecated")]

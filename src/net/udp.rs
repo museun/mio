@@ -7,9 +7,9 @@
 //!
 /// [portability guidelines]: ../struct.Poll.html#portability
 
-use {io, sys, Ready, Poll, PollOpt, Token};
-use event::Evented;
-use poll::SelectorId;
+use crate::{io, sys, Ready, Poll, PollOpt, Token};
+use crate::event::Evented;
+use crate::poll::SelectorId;
 use std::fmt;
 use std::net::{self, Ipv4Addr, Ipv6Addr, SocketAddr};
 

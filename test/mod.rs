@@ -14,7 +14,7 @@ extern crate tempdir;
 #[cfg(target_os = "fuchsia")]
 extern crate fuchsia_zircon as zircon;
 
-pub use ports::localhost;
+pub use crate::ports::localhost;
 
 mod test_custom_evented;
 mod test_close_on_drop;

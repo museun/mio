@@ -1,8 +1,8 @@
-use {channel, Poll, Events, Token};
-use event::Evented;
-use deprecated::{Handler, NotifyError};
-use event_imp::{Event, Ready, PollOpt};
-use timer::{self, Timer, Timeout};
+use crate::{channel, Poll, Events, Token};
+use crate::event::Evented;
+use crate::deprecated::{Handler, NotifyError};
+use crate::event_imp::{Event, Ready, PollOpt};
+use crate::timer::{self, Timer, Timeout};
 use std::{io, fmt, usize};
 use std::default::Default;
 use std::time::Duration;

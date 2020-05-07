@@ -1,4 +1,4 @@
-use {Poll, Token};
+use crate::{Poll, Token};
 use std::{fmt, io, ops};
 
 /// A value that may be registered with `Poll`
@@ -703,7 +703,7 @@ impl Ready {
     /// [`Poll`]: struct.Poll.html
     #[inline]
     pub fn all() -> Ready {
-        Ready(READABLE | WRITABLE | ::sys::READY_ALL)
+        Ready(READABLE | WRITABLE | crate::sys::READY_ALL)
     }
 
     /// Returns true if `Ready` is the empty set
